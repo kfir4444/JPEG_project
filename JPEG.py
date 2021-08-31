@@ -44,6 +44,7 @@ def zeros_on_zigzag(f,N):
     """
     returns the No. of zeros in the end of the zigzag of the metrix
     """
+    #print(f)
     i = N-1
     j = N-1
     res = 0
@@ -83,7 +84,7 @@ def jpeg(f):
     for i in range(8):
         for j in range(8):
             b[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)*q[i,j]
-    z = zeros_on_zigzag(b)
+    z = zeros_on_zigzag(b,8)
     f_jpeg = np.matmul(C.T,np.matmul(b,C))
     f_jpeg += 128.5
     f_jpeg = FLoor(f_jpeg)
