@@ -1,16 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[22]:
-
-
 from math import cos, pi, floor
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-# In[23]:
-
 
 def delta(x):
     """
@@ -26,9 +16,6 @@ def delta(x):
         return 0.5**0.5
 
 
-# In[28]:
-
-
 def floor_line(L):
     """
     returns an array, with the integer value of the input array
@@ -36,10 +23,6 @@ def floor_line(L):
     output: np.array(dtype = "int")
     """
     return map(floor,L)
-
-
-# In[43]:
-
 
 def q_gen():
     """
@@ -54,10 +37,6 @@ def q_gen():
         q0 = q0[1:]
         q.append(np.array(q0))
     return np.array(q)
-
-
-# In[44]:
-
 
 def jpeg(f):
     """
@@ -89,4 +68,3 @@ def jpeg(f):
             elif f_jpeg[i,j] < 0:
                 f_jpeg[i,j] =0
     return f_jpeg
-
