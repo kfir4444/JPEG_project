@@ -1,6 +1,7 @@
 from math import cos, pi, floor
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 def delta(x):
     """
@@ -15,14 +16,15 @@ def delta(x):
     else:
         return 0.5**0.5
 
-
-def floor_line(L):
+def FLoor(M):
     """
-    returns an array, with the integer value of the input array
-    input: np.array(dtype = "float")
-    output: np.array(dtype = "int")
+    returns the integer value of a matrix
     """
-    return map(floor,L)
+    M1 = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            M1[i,j] = floor(M[i,j])
+    return M1
 
 def q_gen():
     """
@@ -38,6 +40,30 @@ def q_gen():
         q.append(np.array(q0))
     return np.array(q)
 
+def zeros_on_zigzag(f,N):
+    """
+    returns the No. of zeros in the end of the zigzag of the metrix
+    """
+    i = N-1
+    j = N-1
+    res = 0
+    step = 1
+    while i != 0 or j != 0:
+        if f[i][j] == 0:
+            res += 1
+        else:
+            break
+        if (i == N-1 and step == 1) or (i == 0 and step == -1):
+            j -= 1
+            step = -step
+        elif (j == N-1 and step == -1) or (j == 0 and step == 1):
+            i -= 1
+            step = -step
+        else:
+            i+=step
+            j-=step
+    return res
+
 def jpeg(f):
     """
     Return the image f compressed with JPEG algorythem
@@ -46,25 +72,25 @@ def jpeg(f):
     C - the cosine transformation matrix-
     [C]_{i,j} = \frac{\delta_i}{\sqrt{N}}\cdot cos(\frac{i(2j+1)\pi}{2N})
     """
-    C = np.zeros((8,8))
-    q = C
-    for k in range(8):
-        for h in range(8):
-            C[k,h] = delta(k)/(8**0.5)*cos(k*(2*h+1)*pi/(16))
+    C = np.array([[1/8**0.5]*8]*8)
+    for i in range(1,8):
+        for j in range(8):
+            C[i,j] = cos((2*j+1)*i*pi/16)/2
     f = np.array(f)-128
-    alpha = np.dot(np.dot(C,f),C.T)
+    alpha = np.matmul(np.matmul(C,f),C.T)
     b = np.zeros((8,8))
     q = q_gen()
     for i in range(8):
         for j in range(8):
-            b[i,j] = floor(a[i,j]/q[i,j] + 1/2)*q[i,j]
-    ft_jpeg = np.dot(C.T,np.dot(b,C))
+            b[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)*q[i,j]
+    z = zeros_on_zigzag(b)
+    f_jpeg = np.matmul(C.T,np.matmul(b,C))
     f_jpeg += 128.5
-    f_jpeg = map(floor_line,f_jpeg)
+    f_jpeg = FLoor(f_jpeg)
     for i in range(8):
         for j in range(8):
             if f_jpeg[i,j] > 255:
                 f_jpeg[i,j] = 255
             elif f_jpeg[i,j] < 0:
                 f_jpeg[i,j] =0
-    return f_jpeg
+    return f_jpeg, z
