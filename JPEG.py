@@ -64,6 +64,17 @@ def zeros_on_zigzag(f,N):
             i+=step
             j-=step
     return res
+def q_2(beta):
+    """
+    returns the Q martix, where [q]_{i,j} = exp(\frac{(i+j)}{\alpha})
+    input: courently unknown
+    output: 8x8 matrix
+    """
+    q = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            q[i,j] = 10*exp(((i**2+j**2)**0.5)/beta)
+    return q
 
 def jpeg(f):
     """
@@ -84,6 +95,80 @@ def jpeg(f):
     for i in range(8):
         for j in range(8):
             b[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)*q[i,j]
+    z = zeros_on_zigzag(b,8)
+    f_jpeg = np.matmul(C.T,np.matmul(b,C))
+    f_jpeg += 128.5
+    f_jpeg = FLoor(f_jpeg)
+    for i in range(8):
+        for j in range(8):
+            if f_jpeg[i,j] > 255:
+                f_jpeg[i,j] = 255
+            elif f_jpeg[i,j] < 0:
+                f_jpeg[i,j] =0
+    return f_jpeg, z
+
+def jpeg2(f,beta):
+    """
+    Return the image f compressed with JPEG algorythem
+    input: 8x8 matrix with values from 0 to 255
+    output: 8x8 matrix with values from 0 to 255
+    C - the cosine transformation matrix-
+    [C]_{i,j} = \frac{\delta_i}{\sqrt{N}}\cdot cos(\frac{i(2j+1)\pi}{2N})
+    """
+    C = np.array([[1/8**0.5]*8]*8)
+    for i in range(1,8):
+        for j in range(8):
+            C[i,j] = cos((2*j+1)*i*pi/16)/2
+    f = np.array(f)-128
+    alpha = np.matmul(np.matmul(C,f),C.T)
+    l = np.zeros((8,8))
+    q = q_2(beta)
+    for i in range(8):
+        for j in range(8):
+            l[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)
+    b = np.multiply(l,q)
+    z = zeros_on_zigzag(b,8)
+    f_jpeg = np.matmul(C.T,np.matmul(b,C))
+    f_jpeg += 128.5
+    f_jpeg = FLoor(f_jpeg)
+    for i in range(8):
+        for j in range(8):
+            if f_jpeg[i,j] > 255:
+                f_jpeg[i,j] = 255
+            elif f_jpeg[i,j] < 0:
+                f_jpeg[i,j] =0
+    return f_jpeg, z
+
+def remove_zero_coeff(OrigM,M):
+    """
+    returns the original matrix, with 0 in the positions when M is 0
+    """
+    for i in range(8):
+        for j in range(8):
+            if M[i,j] == 0:
+                OrigM[i,j] = 0
+    return OrigM
+
+def jpeg3(f,beta):
+    """
+    Return the image f compressed with JPEG algorythem
+    input: 8x8 matrix with values from 0 to 255
+    output: 8x8 matrix with values from 0 to 255
+    C - the cosine transformation matrix-
+    [C]_{i,j} = \frac{\delta_i}{\sqrt{N}}\cdot cos(\frac{i(2j+1)\pi}{2N})
+    """
+    C = np.array([[1/8**0.5]*8]*8)
+    for i in range(1,8):
+        for j in range(8):
+            C[i,j] = cos((2*j+1)*i*pi/16)/2
+    f = np.array(f)-128
+    alpha = np.matmul(np.matmul(C,f),C.T)
+    l = np.zeros((8,8))
+    q = q_2(beta)
+    for i in range(8):
+        for j in range(8):
+            l[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)
+    b = remove_zero_coeff(alpha, l)
     z = zeros_on_zigzag(b,8)
     f_jpeg = np.matmul(C.T,np.matmul(b,C))
     f_jpeg += 128.5
