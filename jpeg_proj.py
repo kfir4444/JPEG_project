@@ -53,8 +53,8 @@ def main(f,N):
                     j_diff[k] = j
                     min_diff[k] = curr_diff
     first = 0
-    second = 3
-    third = 3
+    second = 0
+    third = 0
     return (f_arr_jpeg[first][first,first] , f_arr_jpeg[second][i_diff[second], j_diff[second]], f_arr_jpeg[third][i_comp[third], j_comp[third]],
             diffs[first][first,first], diffs[second][i_diff[second], j_diff[second]], diffs[third][i_comp[third], j_comp[third]],
             comp_rates[first][first,first], comp_rates[second][i_diff[second], j_diff[second]], comp_rates[third][i_comp[third], j_comp[third]])
