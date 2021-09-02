@@ -1,4 +1,4 @@
-from math import cos, pi, floor
+from math import cos, pi, floor, exp
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
@@ -75,8 +75,15 @@ def q_2(beta):
         for j in range(8):
             q[i,j] = 10*exp(((i**2+j**2)**0.5)/beta)
     return q
-
-def jpeg(f):
+def jpeg(f,i):
+    d = {"1":jpeg1,
+         "2":jpeg4,
+         "3":jpeg2,
+         "4":jpeg3}
+    i = str(i)
+    func = d[i]
+    return func(f)
+def jpeg1(f):
     """
     Return the image f compressed with JPEG algorythem
     input: 8x8 matrix with values from 0 to 255
@@ -107,7 +114,7 @@ def jpeg(f):
                 f_jpeg[i,j] =0
     return f_jpeg, z
 
-def jpeg2(f,beta):
+def jpeg2(f):
     """
     Return the image f compressed with JPEG algorythem
     input: 8x8 matrix with values from 0 to 255
@@ -115,6 +122,7 @@ def jpeg2(f,beta):
     C - the cosine transformation matrix-
     [C]_{i,j} = \frac{\delta_i}{\sqrt{N}}\cdot cos(\frac{i(2j+1)\pi}{2N})
     """
+    beta = 4
     C = np.array([[1/8**0.5]*8]*8)
     for i in range(1,8):
         for j in range(8):
@@ -149,7 +157,7 @@ def remove_zero_coeff(OrigM,M):
                 OrigM[i,j] = 0
     return OrigM
 
-def jpeg3(f,beta):
+def jpeg3(f):
     """
     Return the image f compressed with JPEG algorythem
     input: 8x8 matrix with values from 0 to 255
@@ -157,6 +165,7 @@ def jpeg3(f,beta):
     C - the cosine transformation matrix-
     [C]_{i,j} = \frac{\delta_i}{\sqrt{N}}\cdot cos(\frac{i(2j+1)\pi}{2N})
     """
+    beta = 4
     C = np.array([[1/8**0.5]*8]*8)
     for i in range(1,8):
         for j in range(8):
@@ -196,7 +205,7 @@ def jpeg4(f):
     f = np.array(f)-128
     alpha = np.matmul(np.matmul(C,f),C.T)
     l = np.zeros((8,8))
-    q = q_2(beta)
+    q = q_gen()
     for i in range(8):
         for j in range(8):
             l[i,j] = floor(alpha[i,j]/q[i,j] + 1/2)
